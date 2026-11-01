@@ -9,6 +9,7 @@ require 'conexao.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.2/font/bootstrap-icons.min.css">
 
     <title>Usuários</title>
 </head>
@@ -38,21 +39,41 @@ require 'conexao.php';
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>teste</td>
-                                    <td>teste@example.com</td>
-                                    <td>01/01/2001</td>
-                                    <td>
-                                        <a href="" class="btn btn-secondary bt-sm">Visualizar</a>
-                                        <a href="" class="btn btn-alert bt-sm">Editar</a>
-                                        <form action="" method="POST" class="d-inline">
-                                            <button type="submit" name="delete_usuario" value="1" class="btn btn-danger btn-sm">
-                                                Excluir
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
+                                <?php
+                                $sql = 'SELECT * FROM usuarios';
+                                $usuarios = mysqli_query($conexao, $sql);
+
+                                if (mysqli_num_rows($usuarios) > 0) {
+                                    foreach ($usuarios as $usuario) {
+                                ?>
+                                        <tr>
+                                            <td><?= $usuario['id'] ?></td>
+                                            <td><?= $usuario['nome'] ?></td>
+                                            <td><?= $usuario['email'] ?></td>
+                                            <td><?= date('d/m/Y', strtotime($usuario['data_nascimento'])) ?></td>
+                                            <td>
+                                                <a href="usuario-view.php?id=<?= $usuario['id'] ?>" class="btn btn-secondary bt-sm">
+                                                    <span class="bi-eye-fill"></span>&nbsp;
+                                                    Visualizar
+                                                </a>
+                                                <a href="usuario-edit.php?id=<?= $usuario['id'] ?>" class="btn btn-alert bt-sm">
+                                                    <span class="bi-pencil-fill"></span>&nbsp;
+                                                    Editar
+                                                </a>
+                                                <form action="acoes.php" method="POST" class="d-inline">
+                                                    <button onclick="return confirm('Tem certeza que deseja excluir?')" type="submit" name="delete_usuario" value="<?= $usuario['id'] ?>" class="btn btn-danger btn-sm">
+                                                        <span class="bi-trash3-fill"></span>&nbsp;
+                                                        Excluir
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                <?php
+                                    }
+                                } else {
+                                    echo '<h5>Nenhum usuário encontrado</h5>';
+                                };
+                                ?>
                             </tbody>
                         </table>
                     </div>
